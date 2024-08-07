@@ -1,4 +1,4 @@
-package com.mikail.BookStoreApp
+package com.mikail.bookStoreApp
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

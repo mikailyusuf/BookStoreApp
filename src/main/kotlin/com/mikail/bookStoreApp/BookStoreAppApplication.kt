@@ -1,4 +1,4 @@
-package com.mikail.BookStoreApp
+package com.mikail.bookStoreApp
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

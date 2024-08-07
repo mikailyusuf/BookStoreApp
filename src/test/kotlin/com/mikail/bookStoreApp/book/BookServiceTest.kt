@@ -1,7 +1,7 @@
-package com.mikail.BookStoreApp.book
+package com.mikail.bookStoreApp.book
 
-import com.mikail.BookStoreApp.User.User
-import com.mikail.BookStoreApp.User.UserRepository
+import com.mikail.bookStoreApp.user.User
+import com.mikail.bookStoreApp.user.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.extension.ExtendWith

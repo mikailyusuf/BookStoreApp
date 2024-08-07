@@ -1,6 +1,6 @@
-package com.mikail.BookStoreApp.book
+package com.mikail.bookStoreApp.book
 
-import com.mikail.BookStoreApp.User.UserRepository
+import com.mikail.bookStoreApp.user.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -13,6 +13,10 @@ class BookService(
 ) {
 
     fun getAllBooks(): List<Book> = bookRepository.findAll()
+
+    fun getBooksByUserId(userId: UUID): List<Book> {
+        return bookRepository.findByUserId(userId)
+    }
 
     fun getBookById(id: UUID): Book = bookRepository.findById(id).orElseThrow { Exception("Book not found") }
 

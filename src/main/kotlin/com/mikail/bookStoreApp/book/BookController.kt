@@ -1,4 +1,4 @@
-package com.mikail.BookStoreApp.book
+package com.mikail.bookStoreApp.book
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -23,4 +23,7 @@ class BookController(@Autowired private val bookService: BookService) {
 
     @DeleteMapping("/{id}")
     fun deleteBook(@PathVariable id: UUID) = bookService.deleteBook(id)
+
+    @GetMapping("/user/{id}")
+    fun getBookUserBooks(@PathVariable id: UUID): List<Book> = bookService.getBooksByUserId(id)
 }
