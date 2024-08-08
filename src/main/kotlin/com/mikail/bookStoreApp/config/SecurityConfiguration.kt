@@ -26,24 +26,17 @@ class SecurityConfiguration(
             .authorizeHttpRequests {
                 it
                     .requestMatchers(
-                        HttpMethod.POST,
-                        "/api/auth",
-                        "api/auth/refresh",
                         "/error",
                         "/api/users",
                         "/api/books"
                     )
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/login")
+                    .requestMatchers(HttpMethod.POST, "/api/auth/*")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/signup")
+                    .requestMatchers( "/api/books/**")
                     .permitAll()
-
-//                    .permitAll()
-//                    .requestMatchers(HttpMethod.GET, "/api/user", "/api/books")
-//                    .permitAll()
-//                    .requestMatchers("/api/user**")
-//                    .hasRole("ADMIN")
+                    .requestMatchers( "/images/**")
+                    .permitAll()
                     .anyRequest()
                     .fullyAuthenticated()
             }

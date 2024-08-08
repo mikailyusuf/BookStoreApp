@@ -1,17 +1,24 @@
-package com.mikail.bookStoreApp.user
+package com.mikail.bookStoreApp.feature.auth
 
+import com.mikail.bookStoreApp.feature.auth.dto.*
+import com.mikail.bookStoreApp.feature.user.User
+import com.mikail.bookStoreApp.feature.user.UserRepository
 import com.mikail.bookStoreApp.services.CustomUserDetailsService
 import com.mikail.bookStoreApp.services.TokenService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 
 @Service
-class UserService(
+class AuthService(
     @Autowired private val userRepository: UserRepository,
     private val authManager: AuthenticationManager,
     private val userDetailsService: CustomUserDetailsService,
@@ -19,11 +26,33 @@ class UserService(
     private val encoder: PasswordEncoder
 ) {
 
-    fun getAllUsers(): List<User> = userRepository.findAll()
+    private val uploadDir: Path = Paths.get("uploads")
 
-    fun getUserById(id: UUID): User = userRepository.findById(id).orElseThrow { Exception("User not found") }
+    init {
+        Files.createDirectories(uploadDir)
+    }
 
-    fun createUser(user: User): User = userRepository.save(user.copy(password = encoder.encode(user.password)))
+    fun createUser(request: CreateUserRequest): UserResponse {
+        if (userRepository.existsByEmail(request.email)) {
+            throw DataIntegrityViolationException("Email already exists")
+        }
+        val imagePath = request.avatar.let {
+            val uniqueFileName = generateUniqueFileName(it.originalFilename!!)
+            val filePath = uploadDir.resolve(uniqueFileName)
+
+            Files.copy(it.inputStream, filePath)
+            uniqueFileName
+        }
+        return userRepository.save(
+            User(
+                email = request.email,
+                name = request.name,
+                avatar = imagePath,
+                password = encoder.encode(request.password)
+            )
+        ).toUserResponse()
+    }
+
 
     fun login(authenticationRequest: AuthenticationRequest): AuthenticationResponse {
         authManager.authenticate(
@@ -39,18 +68,11 @@ class UserService(
         )
     }
 
-    fun updateUser(id: UUID, userDetails: User): User {
-        val user = getUserById(id)
-        return userRepository.save(
-            user.copy(
-                name = userDetails.name,
-                email = userDetails.email,
-                avatar = userDetails.avatar
-            )
-        )
+    private fun generateUniqueFileName(originalFileName: String): String {
+        val extension = originalFileName.substringAfterLast('.', "")
+        val uniqueName = UUID.randomUUID().toString()
+        return if (extension.isNotEmpty()) "$uniqueName.$extension" else uniqueName
     }
-
-    fun deleteUser(id: UUID) = userRepository.deleteById(id)
 
     private fun createAccessToken(user: UserDetails) = tokenService.generate(
         userDetails = user,

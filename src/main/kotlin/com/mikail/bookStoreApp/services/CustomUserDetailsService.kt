@@ -1,13 +1,13 @@
 package com.mikail.bookStoreApp.services
 
-import com.mikail.bookStoreApp.user.UserRepository
+import com.mikail.bookStoreApp.feature.user.UserRepository
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
-typealias ApplicationUser = com.mikail.bookStoreApp.user.User
+typealias ApplicationUser = com.mikail.bookStoreApp.feature.user.User
 
 @Service
 class CustomUserDetailsService(

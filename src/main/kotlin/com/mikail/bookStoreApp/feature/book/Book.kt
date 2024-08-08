@@ -1,30 +1,31 @@
-package com.mikail.bookStoreApp.user
+package com.mikail.bookStoreApp.feature.book
 
-import com.fasterxml.jackson.annotation.JsonManagedReference
-import com.mikail.bookStoreApp.book.Book
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.mikail.bookStoreApp.feature.user.User
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.Instant
 import java.util.*
 
-
 @Entity
-@Table(name = "app_user")
 @EntityListeners(AuditingEntityListener::class)
-data class User(
+data class Book(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false, nullable = false)
     val id: UUID = UUID.randomUUID(),
-    val name: String,
-    val email: String,
-    val avatar: String?,
-    var password: String,
+    val title: String,
+    val author: String,
+    @Column(length = 1000)
+    val description: String,
+    val price: Double,
+    val coverImage:String,
     @CreatedDate
     @Column(updatable = false)
     val createdAt: Instant = Instant.now(),
-    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JsonManagedReference
-    val books: List<Book>? = mutableListOf()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    val user: User? = null
 )

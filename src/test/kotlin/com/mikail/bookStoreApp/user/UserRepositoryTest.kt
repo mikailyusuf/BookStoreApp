@@ -1,5 +1,7 @@
 package com.mikail.bookStoreApp.user
 
+import com.mikail.bookStoreApp.feature.user.User
+import com.mikail.bookStoreApp.feature.user.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,7 +1,7 @@
 package com.mikail.bookStoreApp.configuration
 
 import com.mikail.bookStoreApp.services.CustomUserDetailsService
-import com.mikail.bookStoreApp.user.UserRepository
+import com.mikail.bookStoreApp.feature.user.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
