@@ -2,8 +2,12 @@ package com.mikail.bookStoreApp.feature.book
 
 import com.mikail.bookStoreApp.config.UserContext
 import com.mikail.bookStoreApp.feature.user.UserRepository
+import com.mikail.bookStoreApp.utils.generateUniqueFileName
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 
 
@@ -13,6 +17,7 @@ class BookService(
     @Autowired private val userRepository: UserRepository,
     private val userContext: UserContext
 ) {
+    private val uploadDir: Path = Paths.get("uploads")
 
     fun getAllBooks(): List<Book> = bookRepository.findAll()
 
@@ -33,9 +38,24 @@ class BookService(
         }
     }
 
-    fun createBook(book: Book): Book {
+    fun createBook(request: CreateBookRequest): Book {
         val user = userRepository.findByEmail(userContext.getUserEmail())
-        return bookRepository.save(book.copy(user = user))
+        val imagePath = request.coverImage.let {
+            val uniqueFileName = generateUniqueFileName(it.originalFilename!!)
+            val filePath = uploadDir.resolve(uniqueFileName)
+
+            Files.copy(it.inputStream, filePath)
+            uniqueFileName
+        }
+
+        return bookRepository.save(
+            Book(
+                title = request.title,
+                description = request.description,
+                author = request.author,
+                price = request.price, user = user, coverImage = "images/${imagePath}"
+            )
+        )
     }
 
     fun updateBook(id: UUID, bookDetails: Book): Book {

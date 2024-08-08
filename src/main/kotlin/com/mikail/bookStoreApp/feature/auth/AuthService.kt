@@ -5,6 +5,7 @@ import com.mikail.bookStoreApp.feature.user.User
 import com.mikail.bookStoreApp.feature.user.UserRepository
 import com.mikail.bookStoreApp.services.CustomUserDetailsService
 import com.mikail.bookStoreApp.services.TokenService
+import com.mikail.bookStoreApp.utils.generateUniqueFileName
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.authentication.AuthenticationManager
@@ -47,7 +48,7 @@ class AuthService(
             User(
                 email = request.email,
                 name = request.name,
-                avatar = imagePath,
+                avatar = "images/uploads/${imagePath}",
                 password = encoder.encode(request.password)
             )
         ).toUserResponse()
@@ -66,12 +67,6 @@ class AuthService(
         return AuthenticationResponse(
             accessToken = accessToken,
         )
-    }
-
-    private fun generateUniqueFileName(originalFileName: String): String {
-        val extension = originalFileName.substringAfterLast('.', "")
-        val uniqueName = UUID.randomUUID().toString()
-        return if (extension.isNotEmpty()) "$uniqueName.$extension" else uniqueName
     }
 
     private fun createAccessToken(user: UserDetails) = tokenService.generate(

@@ -2,6 +2,7 @@ package com.mikail.bookStoreApp.feature.book
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
@@ -22,7 +23,21 @@ class BookController(@Autowired private val bookService: BookService) {
     fun searchBooks(@RequestParam keyword: String): List<Book> = bookService.searchBooks(keyword)
 
     @PostMapping
-    fun createBook(@RequestBody book: Book): Book = bookService.createBook(book)
+    fun createBook(
+        @RequestPart("title") title: String,
+        @RequestPart("author") author: String,
+        @RequestPart("description") description: String,
+        @RequestPart("price") price: String,
+        @RequestPart("coverImage", required = false) coverImage: MultipartFile
+    ): Book = bookService.createBook(
+        CreateBookRequest(
+            title = title,
+            author = author,
+            description = description,
+            price = price.toDouble(),
+            coverImage = coverImage
+        )
+    )
 
     @PutMapping("/{id}")
     fun updateBook(@PathVariable id: UUID, @RequestBody book: Book): Book = bookService.updateBook(id, book)
